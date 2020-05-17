@@ -112,7 +112,6 @@ const IndexPage = ({data: rawData}) => {
 
 									const {artist, date, venue, location} = data[0]
 
-									window.t = date;
 									return `${artist} on ${date.format('dddd MMMM Do YYYY')} at ${venue} in ${location}`
 								})()}</small>
 							</h3>
