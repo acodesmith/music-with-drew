@@ -1,29 +1,12 @@
-import React from 'react'
-import moment from 'moment'
-import _ from 'lodash'
+import { graphql, Link } from 'gatsby';
+import React from 'react';
+import _ from 'lodash';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faGuitar, faUserAstronaut, faCity, faMapMarkedAlt, faAward, faCalendarAlt} from '@fortawesome/free-solid-svg-icons'
+import { normalizeData } from "../util/data";
+import { Footer } from "../components/Footer";
 import './index.css';
 
-const normalizeData = (data) => {
-	return data.map(({node}) => {
-
-		const {id, band: artist, date, venue, city: location} = node;
-
-		const [city = '', state = ''] = location.split(",");
-
-		return {
-			_date: date,
-			location,
-			id,
-			artist,
-			venue,
-			date: moment(date, "MM/D/YYYY"),
-			city: city,
-			state: state.trim()
-		}
-	});
-}
 
 const groupData = (data) => {
 	const cities = _.groupBy(data, "city")
@@ -56,7 +39,8 @@ const IndexPage = ({data: rawData}) => {
 	]
 
 	return (
-		<div className="bg-gray-100 min-h-screen ">
+		<>
+		<div className="bg-gray-100 min-h-screen">
 			<div className="container mx-auto max-w-screen-md">
 				<h2 className="text-5xl text-blue-900 pt-6 ml-2">Drew love️s music.</h2>
 				<h2 className="text-3xl text-blue-400 pb-3 text-opacity-50 ml-2">I mean he <em>really</em> loves music.</h2>
@@ -76,35 +60,35 @@ const IndexPage = ({data: rawData}) => {
 				</div>
 				{/*<Chart data={graphData} series={series} axes={axes} tooltip />*/}
 				<div className="md:grid md:grid-flow-col block">
-					<div className="mx-1 my-3 max-w-xl flex p-6 bg-white rounded-lg shadow-xl">
-						<h4 className="max-w-sm w-56 text-center">
+					<div className="mx-1 my-3 md:max-w-xl md:flex sm:flex p-6 bg-white rounded-lg shadow-xl">
+						<h4 className="max-w-sm md:w-56 text-center mb-4 mx-auto">
 							<span className="text-5xl text-gray-700 leading-tight">Top 5</span><br/>
 							<span className="text-sm text-gray-500">by shows attendance</span>
 						</h4>
-						<ol className="pl-10 w-full">
+						<ol className="md:pl-10 w-full">
 							{(() => {
 								let temp = artist;
 								temp = temp.splice(0, 5);
 
 								return temp.map((data, index) => (
-									<li key={data.key} className={`flex w-full ${index === 0 ? 'text-xl' : ''}`}>
+									<li key={data.key} className={`flex w-full ${index === 0 ? 'sm:text-md md:text-xl' : ''}`}>
 										<div className="text-grey-500">{data.key}</div> <div className="ml-auto text-grey-800">{data.value.length} times</div>
 									</li>
 								))
 							})()}
 						</ol>
 					</div>
-					<div className="mx-1 my-3 max-w-md p-6 bg-white rounded-lg shadow-xl">
+					<div className="mx-1 my-3 md:max-w-md p-6 bg-white rounded-lg shadow-xl">
 						<h3 className="text-lg mb-3">Have you been to a show with Drew?</h3>
-						<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-							Search
-						</button>
+						<Link to={'/archive'} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+							Search Archive
+						</Link>
 					</div>
 				</div>
-				<div className="flex">
-					<div className="mx-1 my-3 max-w-sm flex p-6 bg-white rounded-lg shadow-xl flex-grow"
+				<div className="md:flex block">
+					<div className="mx-1 my-3 md:max-w-sm flex p-6 bg-white rounded-lg shadow-xl flex-grow sm:w-full"
 					>
-						<FontAwesomeIcon icon={faAward} size={'3x'}/>
+						<FontAwesomeIcon icon={faAward} size={'3x'} color={'#4a5568'}/>
 						<div className="flex flex-col ml-6 pt-1">
 							<h3>
 								The first show Drew ever saw: <br/>
@@ -117,9 +101,9 @@ const IndexPage = ({data: rawData}) => {
 							</h3>
 						</div>
 					</div>
-					<div className="mx-1 my-3 max-w-sm flex p-6 bg-white rounded-lg shadow-xl flex-grow"
+					<div className="mx-1 my-3 md:max-w-sm flex p-6 bg-white rounded-lg shadow-xl flex-grow"
 					>
-						<FontAwesomeIcon icon={faCalendarAlt} size={'3x'}/>
+						<FontAwesomeIcon icon={faCalendarAlt} size={'3x'} color={'#4a5568'}/>
 						<div className="flex flex-col ml-6 pt-1">
 							<h3>
 								Most recent show Drew has seen: <br/>
@@ -135,6 +119,8 @@ const IndexPage = ({data: rawData}) => {
 				</div>
 			</div>
 		</div>
+		<Footer/>
+		</>
 	)
 }
 
