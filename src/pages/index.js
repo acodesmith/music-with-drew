@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faGuitar, faUserAstronaut, faCity, faMapMarkedAlt, faAward, faCalendarAlt} from '@fortawesome/free-solid-svg-icons'
 import { normalizeData } from "../util/data";
 import { Footer } from "../components/Footer";
+import { theme } from "../util/theme";
 import './index.css';
 
 
@@ -40,29 +41,29 @@ const IndexPage = ({data: rawData}) => {
 
 	return (
 		<>
-		<div className="bg-gray-100 min-h-screen">
+		<div className={`${theme('bg-gray-100', 'bg-gray-800')} min-h-screen`}>
 			<div className="container mx-auto max-w-screen-md">
-				<h2 className="text-5xl text-blue-900 pt-6 ml-2">Drew love️s music.</h2>
-				<h2 className="text-3xl text-blue-400 pb-3 text-opacity-50 ml-2">I mean he <em>really</em> loves music.</h2>
+				<h2 className={`${theme('text-blue-900', 'text-blue-100')} text-5xl pt-6 ml-2`}>Drew love️s music.</h2>
+				<h2 className={`${theme('text-blue-400', 'text-blue-200')} text-3xl pb-3 text-opacity-50 ml-2`}>I mean he <em>really</em> loves music.</h2>
 				<div className={'flex flex-wrap'}>
 					{metrics.map(({title, value, icon, iconColor}) => (
 						<div
 							key={`${title}-${value}`}
-							className="mx-1 my-3 max-w-sm flex p-6 bg-white rounded-lg shadow-xl flex-grow"
+							className={`${theme('bg-white', 'bg-gray-900')} mx-1 my-3 max-w-sm flex p-6 rounded-lg shadow-xl flex-grow`}
 						>
 							<FontAwesomeIcon icon={icon} size={'3x'} color={iconColor}/>
 							<div className="flex flex-col ml-6 pt-1">
-								<h4 className="text-2xl text-gray-900 leading-tight mr-2">{value}</h4>
-								<p className="text-base text-gray-600 leading-normal">{title}</p>
+								<h4 className={`${theme('text-gray-900', 'text-gray-100')} text-2xl leading-tight mr-2`}>{value}</h4>
+								<p className={`${theme('text-gray-600', 'text-gray-500')} text-base leading-normal`}>{title}</p>
 							</div>
 						</div>
 					))}
 				</div>
 				{/*<Chart data={graphData} series={series} axes={axes} tooltip />*/}
 				<div className="md:grid md:grid-flow-col block">
-					<div className="mx-1 my-3 md:max-w-xl md:flex sm:flex p-6 bg-white rounded-lg shadow-xl">
+					<div className={`${theme('bg-white', 'bg-gray-900')} mx-1 my-3 md:max-w-xl md:flex sm:flex p-6 rounded-lg shadow-xl`}>
 						<h4 className="max-w-sm md:w-56 text-center mb-4 mx-auto">
-							<span className="text-5xl text-gray-700 leading-tight">Top 5</span><br/>
+							<span className={`${theme('text-gray-700', 'text-gray-300')} text-5xl leading-tight`}>Top 5</span><br/>
 							<span className="text-sm text-gray-500">by shows attendance</span>
 						</h4>
 						<ol className="md:pl-10 w-full">
@@ -71,14 +72,14 @@ const IndexPage = ({data: rawData}) => {
 								temp = temp.splice(0, 5);
 
 								return temp.map((data, index) => (
-									<li key={data.key} className={`flex w-full ${index === 0 ? 'sm:text-md md:text-xl' : ''}`}>
+									<li key={data.key} className={`${theme('text-black', 'text-gray-100')} flex w-full ${index === 0 ? 'sm:text-md md:text-xl' : ''}`}>
 										<div className="text-grey-500">{data.key}</div> <div className="ml-auto text-grey-800">{data.value.length} times</div>
 									</li>
 								))
 							})()}
 						</ol>
 					</div>
-					<div className="mx-1 my-3 md:max-w-md p-6 bg-white rounded-lg shadow-xl">
+					<div className={`${theme('bg-white', 'bg-gray-900')} ${theme('text-black', 'text-gray-100')} mx-1 my-3 md:max-w-md p-6 rounded-lg shadow-xl`}>
 						<h3 className="text-lg mb-3">Have you been to a show with Drew?</h3>
 						<Link to={'/archive'} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
 							Search Archive
@@ -86,7 +87,7 @@ const IndexPage = ({data: rawData}) => {
 					</div>
 				</div>
 				<div className="md:flex block">
-					<div className="mx-1 my-3 md:max-w-sm flex p-6 bg-white rounded-lg shadow-xl flex-grow sm:w-full"
+					<div className={`${theme('text-black', 'text-gray-100')} ${theme('bg-white', 'bg-gray-900')} mx-1 my-3 md:max-w-sm flex p-6 rounded-lg shadow-xl flex-grow sm:w-full`}
 					>
 						<FontAwesomeIcon icon={faAward} size={'3x'} color={'#4a5568'}/>
 						<div className="flex flex-col ml-6 pt-1">
@@ -101,7 +102,7 @@ const IndexPage = ({data: rawData}) => {
 							</h3>
 						</div>
 					</div>
-					<div className="mx-1 my-3 md:max-w-sm flex p-6 bg-white rounded-lg shadow-xl flex-grow"
+					<div className={`${theme('text-black', 'text-gray-100')} ${theme('bg-white', 'bg-gray-900')} mx-1 my-3 md:max-w-sm flex p-6 rounded-lg shadow-xl flex-grow`}
 					>
 						<FontAwesomeIcon icon={faCalendarAlt} size={'3x'} color={'#4a5568'}/>
 						<div className="flex flex-col ml-6 pt-1">

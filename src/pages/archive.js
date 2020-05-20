@@ -7,6 +7,7 @@ import { faArrowCircleDown, faArrowCircleUp } from '@fortawesome/free-solid-svg-
 import moment from 'moment';
 import { normalizeData } from "../util/data";
 import { Footer } from "../components/Footer";
+import { theme } from "../util/theme";
 import './index.css';
 
 function Table({ columns, data }) {
@@ -31,7 +32,7 @@ function Table({ columns, data }) {
 					{headerGroup.headers.map(column => (
 						// Add the sorting props to control sorting. For this example
 						// we can add them into the header props
-						<th className={`border-solid border-2 border-gray-300 border-t-0 border-l-0 border-r-0 sticky top-0 bg-blue-100 px-2 py-1 ${column.className ? column.className : ''}`}
+						<th className={`${theme('bg-blue-100', 'bg-blue-900')} border-solid border-2 border-gray-300 border-t-0 border-l-0 border-r-0 sticky top-0 px-2 py-1 ${column.className ? column.className : ''}`}
 								{...column.getHeaderProps(column.getSortByToggleProps())}
 						>
 							{column.render('Header')}
@@ -53,10 +54,15 @@ function Table({ columns, data }) {
 				(row, i) => {
 					prepareRow(row);
 					return (
-						<tr className={i % 2 === 0 ? 'bg-gray-100' : ''} {...row.getRowProps()}>
-							{row.cells.map(cell => {
+						<tr className={i % 2 === 0 ? theme('bg-gray-100', 'bg-gray-800') : ''} {...row.getRowProps()}>
+							{row.cells.map((cell, index) => {
 								return (
-									<td className="border px-2 py-1" {...cell.getCellProps()}>{cell.render('Cell')}</td>
+									<td
+										className={`${theme('border-gray-200', 'border-gray-600')} border px-2 py-1 ${index === 0 ? 'border-l-0' : ''} ${index === (row.cells.length - 1) ? 'border-r-0' : ''}`}
+										{...cell.getCellProps()}
+									>
+										{cell.render('Cell')}
+									</td>
 								)
 							})}
 						</tr>
@@ -129,10 +135,10 @@ const ArchivePage = ({ data: rawData }) => {
 
 	return (
 		<>
-		<div className="bg-gray-100 min-h-screen">
+		<div className={`${theme('bg-gray-100', 'bg-gray-800')} min-h-screen`}>
 			<div className="container flex flex-col mx-auto max-w-screen-md max-h-screen pt-4">
-				<h2 className="text-5xl text-blue-900 pt-6 ml-2">Music with Drew</h2>
-				<h2 className="text-3xl text-blue-400 pb-3 text-opacity-50 ml-2">The Archive</h2>
+				<h2 className={`${theme('text-blue-900', 'text-blue-100')} text-5xl pt-6 ml-2`}>Drew love️s music.</h2>
+				<h2 className={`${theme('text-blue-400', 'text-blue-200')} text-3xl pb-3 text-opacity-50 ml-2`}>The Archive</h2>
 				<input
 					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
 					id="mwdSearch"
@@ -140,7 +146,7 @@ const ArchivePage = ({ data: rawData }) => {
 					placeholder="Search"
 					onChange={(e) => debouncedCallback(e.target.value)}
 				/>
-				<div className="bg-white rounded-lg shadow-xl flex-auto overflow-scroll mb-3">
+				<div className={`${theme('text-black', 'text-gray-100')} ${theme('bg-white', 'bg-gray-700')}  rounded-lg shadow-xl flex-auto overflow-scroll mb-3`}>
 					<Table data={filtered} columns={columns} />
 				</div>
 			</div>
