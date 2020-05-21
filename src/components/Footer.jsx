@@ -11,18 +11,18 @@ export const Footer = () => (
 		</div>
 		<div className="ml-auto text-gray-200 text-sm">
 			&copy; {(new Date()).getFullYear()}<span className="text-gray-500 px-1">|</span><span class="text-gray-200 text-sm">Drew Hackney</span><span className="text-gray-500 px-1">&</span><a className="text-gray-200 text-sm" href='https://acodesmith.com' target='_blank'>Adam Smith</a>
-			<span className="px-1"></span>
-			<a
-				href={'#'}
-				className={`${theme('text-gray-100', 'text-gray-900')} ${theme('bg-gray-900', 'bg-gray-100')} text-xs rounded-sm p-1`}
-				onClick={(e) => {
-					e.preventDefault();
-					flipTheme();
-					window.location.reload();
-				}}
-			>
-				{inversedTheme} Mode
-			</a>
+			{/*<span className="px-1"></span>*/}
+			{/*<a*/}
+				{/*href={'#'}*/}
+				{/*className={`${theme('text-gray-100', 'text-gray-900')} ${theme('bg-gray-900', 'bg-gray-100')} text-xs rounded-sm p-1`}*/}
+				{/*onClick={(e) => {*/}
+					{/*e.preventDefault();*/}
+					{/*flipTheme();*/}
+					{/*window.location.reload();*/}
+				{/*}}*/}
+			{/*>*/}
+				{/*{inversedTheme} Mode*/}
+			{/*</a>*/}
 		</div>
 	</footer>
 )
