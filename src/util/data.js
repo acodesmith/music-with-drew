@@ -8,7 +8,7 @@ export const normalizeData = data => {
 	return data.map(item => {
 		const { id, band: artist, date, venue, city: location } = item;
 
-		const [city = "", state = ""] = location.split(",");
+		const [city = "", state = ""] = location ? location.split(",") : [];
 
 		return {
 			_date: date,
