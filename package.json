@@ -2,12 +2,14 @@
   "name": "gatsby-starter-default",
   "description": "Music With Drew!",
   "version": "1.0.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Adam Smith <adam@acodesmith.com>",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/react-fontawesome": "^0.1.9",
+    "csv": "^5.3.2",
     "csv-loader": "^2.1.1",
+    "dexie": "^3.0.1",
     "gatsby": "^2.0.0",
     "gatsby-cli": "^2.12.27",
     "gatsby-link": "^2.4.2",
@@ -20,13 +22,14 @@
     "react": "^16.13.1",
     "react-charts": "^2.0.0-beta.6",
     "react-dom": "^16.13.1",
+    "react-dropzone": "^11.0.1",
     "react-helmet": "^5.2.0",
     "react-table": "^7.1.0",
     "tailwindcss": "^1.4.6",
     "use-debounce": "^3.4.2"
   },
   "keywords": [
-    "gatsby"
+    "music"
   ],
   "license": "MIT",
   "scripts": {
