@@ -107,13 +107,16 @@ function Table({ columns, data }) {
 }
 
 const ArchivePage = ({ data: rawData }) => {
-  const data = useMemo(() => {
-    const n = normalizeData(rawData.allAttendedCsv.edges);
-    return n.map(data => ({
-      ...data,
-      date: data.date.unix()
-    }));
-  }, []);
+  const data = useMemo(
+    () => {
+      const n = normalizeData(rawData.allAttendedCsv.edges);
+      return n.map(data => ({
+        ...data,
+        date: data.date.unix()
+      }));
+    },
+    [rawData]
+  );
   const [filtered, setFilter] = useState(data);
 
   const columns = useMemo(
@@ -189,13 +192,16 @@ const ArchivePage = ({ data: rawData }) => {
           >
             The Archive
           </h2>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
-            id="mwdSearch"
-            type="text"
-            placeholder="Search"
-            onChange={e => debouncedCallback(e.target.value)}
-          />
+          <label htmlFor={"mwdSearch"}>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+              id="mwdSearch"
+              name="mwdSearch"
+              type="text"
+              placeholder="Search"
+              onChange={e => debouncedCallback(e.target.value)}
+            />
+          </label>
           <div
             className={`${theme("text-black", "text-gray-100")} ${theme(
               "bg-white",

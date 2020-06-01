@@ -1,5 +1,5 @@
 import { graphql, Link } from "gatsby";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,7 +10,7 @@ import {
   faAward,
   faCalendarAlt
 } from "@fortawesome/free-solid-svg-icons";
-import { normalizeData } from "../util/data";
+import { normalizeData, getLocalData } from "../util/data";
 import { Footer } from "../components/Footer";
 import { theme } from "../util/theme";
 import "./index.css";
@@ -34,36 +34,60 @@ const groupData = data => {
   };
 };
 
-const IndexPage = ({ data: rawData }) => {
-  const data = normalizeData(rawData.allAttendedCsv.edges);
-  const { cities, states, artist } = groupData(data);
+const getMetrics = ({ artist, cities, states }, data) => [
+	{
+		title: "Shows",
+		value: data.length,
+		icon: faGuitar,
+		iconColor: "#FFC107"
+	},
+	{
+		title: "Artist",
+		value: Object.keys(artist).length,
+		icon: faUserAstronaut,
+		iconColor: "#FF5722"
+	},
+	{
+		title: "Cities",
+		value: Object.keys(cities).length,
+		icon: faCity,
+		iconColor: "#4CAF50"
+	},
+	{
+		title: "States",
+		value: Object.keys(states).length,
+		icon: faMapMarkedAlt,
+		iconColor: "#E91E63"
+	}
+];
 
-  const metrics = [
-    {
-      title: "Shows",
-      value: data.length,
-      icon: faGuitar,
-      iconColor: "#FFC107"
-    },
-    {
-      title: "Artist",
-      value: Object.keys(artist).length,
-      icon: faUserAstronaut,
-      iconColor: "#FF5722"
-    },
-    {
-      title: "Cities",
-      value: Object.keys(cities).length,
-      icon: faCity,
-      iconColor: "#4CAF50"
-    },
-    {
-      title: "States",
-      value: Object.keys(states).length,
-      icon: faMapMarkedAlt,
-      iconColor: "#E91E63"
-    }
-  ];
+const IndexPage = ({ data: rawData }) => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    getLocalData()
+      .then(d => {
+        console.log("d",d);
+        if(d && d.length) {
+					setData(normalizeData(d));
+        }else{
+					setData(normalizeData(rawData.allAttendedCsv.edges.map(({ node }) => node)));
+        }
+      })
+      .catch(e => {
+        console.error(e);
+				setData(normalizeData(rawData.allAttendedCsv.edges.map(({ node }) => node)));
+      })
+  }, [rawData]);
+
+  if(!data.length) {
+    return (
+      <p>Loading...</p>
+    );
+  }
+
+	const groupedData = groupData(data);
+	const { artist } = groupedData;
 
   return (
     <>
@@ -86,7 +110,7 @@ const IndexPage = ({ data: rawData }) => {
             I mean he <em>really</em> loves music.
           </h2>
           <div className={"flex flex-wrap"}>
-            {metrics.map(({ title, value, icon, iconColor }) => (
+            {getMetrics(groupedData, data).map(({ title, value, icon, iconColor }) => (
               <div
                 key={`${title}-${value}`}
                 className={`${theme(
