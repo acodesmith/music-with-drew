@@ -6,7 +6,6 @@ const DB_NAMESPACE = "MusicWithYou";
 
 export const normalizeData = data => {
 	return data.map(item => {
-		console.log("item",item);
 		const { id, band: artist, date, venue, city: location } = item;
 
 		const [city = "", state = ""] = location.split(",");

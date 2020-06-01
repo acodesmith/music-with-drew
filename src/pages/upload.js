@@ -22,12 +22,13 @@ const Upload = () => {
     }
 
     setProcessing(true);
-    console.log("cvs", cvs);
+
     processCsv(cvs).then(() => {
 			navigate('/')
     })
       .catch(() => {
-        alert('Something went wrong. Not sure dude. Refresh the page and try again.')
+        alert('Something went wrong. Not sure dude. Refresh the page and try again.');
+				setProcessing(false);
       });
   }, []);
 

@@ -67,7 +67,6 @@ const IndexPage = ({ data: rawData }) => {
   useEffect(() => {
     getLocalData()
       .then(d => {
-        console.log("d",d);
         if(d && d.length) {
 					setData(normalizeData(d));
         }else{

@@ -153,7 +153,6 @@ const ArchivePage = ({ data: rawData }) => {
   const [debouncedCallback] = useDebouncedCallback(
     // function
     value => {
-      console.log("value", value);
       if (!value || value === "") {
         setFilter(data);
         return;
