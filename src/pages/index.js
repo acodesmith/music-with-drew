@@ -63,12 +63,14 @@ const getMetrics = ({ artist, cities, states }, data) => [
 
 const IndexPage = ({ data: rawData }) => {
   const [data, setData] = useState([]);
+  const [local, setLocal] = useState(false);
 
   useEffect(() => {
     getLocalData()
       .then(d => {
         if(d && d.length) {
 					setData(normalizeData(d));
+					setLocal(true);
         }else{
 					setData(normalizeData(rawData.allAttendedCsv.edges.map(({ node }) => node)));
         }
@@ -98,7 +100,7 @@ const IndexPage = ({ data: rawData }) => {
               "text-blue-100"
             )} text-5xl pt-6 ml-2`}
           >
-            Drew love️s music.
+						{local ? 'You love music' : 'Drew love️s music'}.
           </h2>
           <h2
             className={`${theme(
@@ -106,7 +108,8 @@ const IndexPage = ({ data: rawData }) => {
               "text-blue-200"
             )} text-3xl pb-3 text-opacity-50 ml-2`}
           >
-            I mean he <em>really</em> loves music.
+						{local && (<>I mean you <em>really</em> love music.</>)}
+						{!local && (<>I mean he <em>really</em> loves music.</>)}
           </h2>
           <div className={"flex flex-wrap"}>
             {getMetrics(groupedData, data).map(({ title, value, icon, iconColor }) => (
@@ -194,12 +197,20 @@ const IndexPage = ({ data: rawData }) => {
               <h3 className="text-lg mb-3">
                 Have you been to a show with Drew?
               </h3>
-              <Link
-                to={"/archive"}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-              >
-                Search Archive
-              </Link>
+              <div className={'flex flex-col text-center'}>
+								<Link
+									to={"/archive"}
+									className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-2"
+								>
+									Search Archive
+								</Link>
+								<Link
+									to={"/upload"}
+									className="bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+								>
+									Upload Your List
+								</Link>
+							</div>
             </div>
           </div>
           <div className="md:flex block">

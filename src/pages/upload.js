@@ -1,36 +1,70 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { navigate } from "gatsby";
 import Link from "gatsby-link";
 import { DropZone } from "../components/DropZone";
 import { theme } from "../util/theme";
-import { processCsv } from "../util/data";
+import { processCsv, getLocalData, clearLocalData } from "../util/data";
+import { downloadFile } from '../util/download';
+import { getSignedUploadUrl } from '../util/aws';
+import './index.css';
+
+const downloadCsv = () => {
+  downloadFile('music-with-you-template', 'band,date,venue,city,\n' +
+		'Mr. Fake Band,2/28/1987,Reynolds Coliseum,"Raleigh, NC",');
+}
 
 const Upload = () => {
   const [processing, setProcessing] = useState(false);
+	const [local, setLocal] = useState(false);
+
+	useEffect(() => {
+		getLocalData()
+			.then(d => {
+				if(d && d.length) {
+					setLocal(true);
+				}
+			})
+	}, []);
 
   const onDropCallback = useCallback(files => {
-    const [cvs] = files;
-
-    if (!cvs) {
-      alert("Error uploading your csv! Try again please.");
-      return;
-    }
-
-    if (cvs.name.split(".").pop() !== "csv") {
-      alert("Only .csv files accepted! Please upload the correct format.");
-      return;
-    }
-
-    setProcessing(true);
-
-    processCsv(cvs).then(() => {
-			navigate('/')
-    })
-      .catch(() => {
-        alert('Something went wrong. Not sure dude. Refresh the page and try again.');
-				setProcessing(false);
-      });
+		getSignedUploadUrl()
+      .then(url => {
+        console.log("url",url);
+      })
+    // const [cvs] = files;
+		//
+    // if (!cvs) {
+    //   alert("Error uploading your csv! Try again please.");
+    //   return;
+    // }
+		//
+    // if (cvs.name.split(".").pop() !== "csv") {
+    //   alert("Only .csv files accepted! Please upload the correct format.");
+    //   return;
+    // }
+		//
+    // setProcessing(true);
+		//
+    // processCsv(cvs).then((shows) => {
+    //   console.log("shows added to local storage: ",shows);
+			// navigate('/');
+    // })
+    //   .catch(() => {
+    //     alert('Something went wrong. Not sure dude. Refresh the page and try again.');
+			// 	setProcessing(false);
+    //   });
   }, []);
+
+  const onClearData = useCallback(() => {
+		clearLocalData()
+			.then(() => {
+				setLocal(false);
+			})
+	}, []);
+
+  const onDownloadTemplate = useCallback(() => {
+		downloadCsv();
+  }, [])
 
   return (
     <div className={`${theme("bg-gray-100", "bg-gray-800")} min-h-screen`}>
@@ -153,12 +187,20 @@ const Upload = () => {
           >
             &#x25C0; Nah, I'm good.
           </Link>
-          <Link
-            to="/"
+          {local && (
+            <button
+              className="ml-2 ml-auto bg-red-400 hover:bg-red-300 text-grey-900 font-bold py-2 px-4 rounded-full"
+              onClick={onClearData}
+            >
+              &#91;&times;&#93; Clear Your Data
+            </button>
+          )}
+          <button
+            onClick={onDownloadTemplate}
             className="ml-2 ml-auto bg-blue-400 hover:bg-blue-300 text-grey-900 font-bold py-2 px-4 rounded-full"
           >
             &#91;&darr;&#93; Download Template
-          </Link>
+          </button>
         </div>
       </div>
     </div>
