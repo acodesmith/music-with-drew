@@ -1,6 +1,5 @@
 import { Link } from "gatsby";
 import React from "react";
-// import { inversedTheme, flipTheme, theme } from "../util/theme";
 
 export const Footer = () => (
   <footer className="bg-gray-600 w-full flex flex-row p-1">
@@ -26,18 +25,6 @@ export const Footer = () => (
       >
         Adam Smith
       </a>
-      {/*<span className="px-1"></span>*/}
-      {/*<a*/}
-      {/*href={'#'}*/}
-      {/*className={`${theme('text-gray-100', 'text-gray-900')} ${theme('bg-gray-900', 'bg-gray-100')} text-xs rounded-sm p-1`}*/}
-      {/*onClick={(e) => {*/}
-      {/*e.preventDefault();*/}
-      {/*flipTheme();*/}
-      {/*window.location.reload();*/}
-      {/*}}*/}
-      {/*>*/}
-      {/*{inversedTheme} Mode*/}
-      {/*</a>*/}
     </div>
   </footer>
 );

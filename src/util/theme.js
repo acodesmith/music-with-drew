@@ -12,8 +12,8 @@ export const getOSTheme = () =>
     ? THEME_DARK
     : window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? THEME_DARK
-      : THEME_LIGHT;
+    ? THEME_DARK
+    : THEME_LIGHT;
 
 /**
  * Return OS Theme or the user defined theme via local storage

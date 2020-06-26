@@ -8,88 +8,130 @@ import {
   faCity,
   faMapMarkedAlt,
   faAward,
-  faCalendarAlt
+  faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { normalizeData, getLocalData } from "../util/data";
-import { Footer } from "../components/Footer";
+import { normalizeData, getLocalData, processCsvFromAws } from "../util/data";
+import { Layout } from "../components/Layout";
 import { theme } from "../util/theme";
+import { getList } from "../util/aws";
 import "./index.css";
 
-const groupData = data => {
+const groupData = (data) => {
   const cities = _.groupBy(data, "city");
   const states = _.groupBy(data, "state");
   const artist = _.groupBy(data, "artist");
   const artistSorted = Object.keys(artist)
-    .map(function(k) {
+    .map(function (k) {
       return { key: k, value: artist[k] };
     })
-    .sort(function(a, b) {
+    .sort(function (a, b) {
       return b.value.length - a.value.length;
     });
 
   return {
     cities,
     states,
-    artist: artistSorted
+    artist: artistSorted,
   };
 };
 
 const getMetrics = ({ artist, cities, states }, data) => [
-	{
-		title: "Shows",
-		value: data.length,
-		icon: faGuitar,
-		iconColor: "#FFC107"
-	},
-	{
-		title: "Artist",
-		value: Object.keys(artist).length,
-		icon: faUserAstronaut,
-		iconColor: "#FF5722"
-	},
-	{
-		title: "Cities",
-		value: Object.keys(cities).length,
-		icon: faCity,
-		iconColor: "#4CAF50"
-	},
-	{
-		title: "States",
-		value: Object.keys(states).length,
-		icon: faMapMarkedAlt,
-		iconColor: "#E91E63"
-	}
+  {
+    title: "Shows",
+    value: data.length,
+    icon: faGuitar,
+    iconColor: "#FFC107",
+  },
+  {
+    title: "Artist",
+    value: Object.keys(artist).length,
+    icon: faUserAstronaut,
+    iconColor: "#FF5722",
+  },
+  {
+    title: "Cities",
+    value: Object.keys(cities).length,
+    icon: faCity,
+    iconColor: "#4CAF50",
+  },
+  {
+    title: "States",
+    value: Object.keys(states).length,
+    icon: faMapMarkedAlt,
+    iconColor: "#E91E63",
+  },
 ];
+
+const initLocal = ({ setData, setLocal, rawData }) => {
+  getLocalData()
+    .then((d) => {
+      if (d && d.length) {
+        setData(normalizeData(d));
+        setLocal(true);
+      } else {
+        setData(
+          normalizeData(rawData.allAttendedCsv.edges.map(({ node }) => node))
+        );
+      }
+    })
+    .catch((e) => {
+      console.error(e);
+      setData(
+        normalizeData(rawData.allAttendedCsv.edges.map(({ node }) => node))
+      );
+    });
+};
 
 const IndexPage = ({ data: rawData }) => {
   const [data, setData] = useState([]);
+  const [local, setLocal] = useState(false);
 
   useEffect(() => {
-    getLocalData()
-      .then(d => {
-        if(d && d.length) {
-					setData(normalizeData(d));
-        }else{
-					setData(normalizeData(rawData.allAttendedCsv.edges.map(({ node }) => node)));
-        }
-      })
-      .catch(e => {
-        console.error(e);
-				setData(normalizeData(rawData.allAttendedCsv.edges.map(({ node }) => node)));
-      })
+    const search = new URLSearchParams(window.location.search);
+    if (search.has("list")) {
+      const id = search.get("list");
+
+      // @todo add info to localStorage to help with reloads
+
+      // Load the list from aws
+      getList(id)
+        .then((data) => {
+          window.localStorage.setItem("list", id);
+
+          processCsvFromAws(data).then((shows) => {
+            setData(normalizeData(shows));
+            setLocal(true);
+          });
+        })
+        .catch((e) => {
+          console.error(e);
+          window.setAlert("We couldn't load shared list. Sorry bro!");
+          window.localStorage.clear("list");
+          initLocal({ setLocal, setData, rawData });
+        });
+    } else {
+      window.localStorage.clear("list");
+      initLocal({ setLocal, setData, rawData });
+    }
   }, [rawData]);
 
-  if(!data.length) {
+  if (!data.length) {
     return (
-      <p>Loading...</p>
+      <Layout>
+        <div className={`${theme("bg-gray-100", "bg-gray-800")} min-h-screen`}>
+          <div className={'flex justify-center items-center'} style={{ height: '100%', width: '100%' }}>
+            <span className={'p-3 bg-white text-blue-900'}>Loading...</span>
+          </div>
+        </div>
+      </Layout>
     );
   }
 
-	const groupedData = groupData(data);
-	const { artist } = groupedData;
+  const groupedData = groupData(data);
+  const { artist } = groupedData;
 
   return (
-    <>
+    <Layout>
       <div className={`${theme("bg-gray-100", "bg-gray-800")} min-h-screen`}>
         <div className="container mx-auto max-w-screen-md">
           <h2
@@ -98,7 +140,7 @@ const IndexPage = ({ data: rawData }) => {
               "text-blue-100"
             )} text-5xl pt-6 ml-2`}
           >
-            Drew love️s music.
+            {local ? "You love music" : "Drew love️s music"}.
           </h2>
           <h2
             className={`${theme(
@@ -106,38 +148,49 @@ const IndexPage = ({ data: rawData }) => {
               "text-blue-200"
             )} text-3xl pb-3 text-opacity-50 ml-2`}
           >
-            I mean he <em>really</em> loves music.
+            {local && (
+              <>
+                I mean you <em>really</em> love music.
+              </>
+            )}
+            {!local && (
+              <>
+                I mean he <em>really</em> loves music.
+              </>
+            )}
           </h2>
           <div className={"flex flex-wrap"}>
-            {getMetrics(groupedData, data).map(({ title, value, icon, iconColor }) => (
-              <div
-                key={`${title}-${value}`}
-                className={`${theme(
-                  "bg-white",
-                  "bg-gray-900"
-                )} mx-1 my-3 max-w-sm flex p-6 rounded-lg shadow-xl flex-grow`}
-              >
-                <FontAwesomeIcon icon={icon} size={"3x"} color={iconColor} />
-                <div className="flex flex-col ml-6 pt-1">
-                  <h4
-                    className={`${theme(
-                      "text-gray-900",
-                      "text-gray-100"
-                    )} text-2xl leading-tight mr-2`}
-                  >
-                    {value}
-                  </h4>
-                  <p
-                    className={`${theme(
-                      "text-gray-600",
-                      "text-gray-500"
-                    )} text-base leading-normal`}
-                  >
-                    {title}
-                  </p>
+            {getMetrics(groupedData, data).map(
+              ({ title, value, icon, iconColor }) => (
+                <div
+                  key={`${title}-${value}`}
+                  className={`${theme(
+                    "bg-white",
+                    "bg-gray-900"
+                  )} mx-1 my-3 max-w-sm flex p-6 rounded-lg shadow-xl flex-grow`}
+                >
+                  <FontAwesomeIcon icon={icon} size={"3x"} color={iconColor} />
+                  <div className="flex flex-col ml-6 pt-1">
+                    <h4
+                      className={`${theme(
+                        "text-gray-900",
+                        "text-gray-100"
+                      )} text-2xl leading-tight mr-2`}
+                    >
+                      {value}
+                    </h4>
+                    <p
+                      className={`${theme(
+                        "text-gray-600",
+                        "text-gray-500"
+                      )} text-base leading-normal`}
+                    >
+                      {title}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
           {/*<Chart data={graphData} series={series} axes={axes} tooltip />*/}
           <div className="md:grid md:grid-flow-col block">
@@ -194,12 +247,20 @@ const IndexPage = ({ data: rawData }) => {
               <h3 className="text-lg mb-3">
                 Have you been to a show with Drew?
               </h3>
-              <Link
-                to={"/archive"}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-              >
-                Search Archive
-              </Link>
+              <div className={"flex flex-col text-center"}>
+                <Link
+                  to={"/archive"}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mb-2"
+                >
+                  Search Archive
+                </Link>
+                <Link
+                  to={"/upload"}
+                  className="bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                >
+                  Upload Your List
+                </Link>
+              </div>
             </div>
           </div>
           <div className="md:flex block">
@@ -256,8 +317,7 @@ const IndexPage = ({ data: rawData }) => {
           </div>
         </div>
       </div>
-      <Footer />
-    </>
+    </Layout>
   );
 };
 
