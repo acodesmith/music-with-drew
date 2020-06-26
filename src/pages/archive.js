@@ -5,7 +5,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowCircleDown,
-  faArrowCircleUp
+  faArrowCircleUp,
 } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import { normalizeData } from "../util/data";
@@ -20,11 +20,11 @@ function Table({ columns, data }) {
     getTableBodyProps,
     headerGroups,
     rows,
-    prepareRow
+    prepareRow,
   } = useTable(
     {
       columns,
-      data
+      data,
     },
     useSortBy
   );
@@ -33,9 +33,9 @@ function Table({ columns, data }) {
   return (
     <table className="table-auto w-full" {...getTableProps()}>
       <thead>
-        {headerGroups.map(headerGroup => (
+        {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
+            {headerGroup.headers.map((column) => (
               // Add the sorting props to control sorting. For this example
               // we can add them into the header props
               <th
@@ -107,44 +107,40 @@ function Table({ columns, data }) {
 }
 
 const ArchivePage = ({ data: rawData }) => {
-  const data = useMemo(
-    () => {
-      const n = normalizeData(rawData.allAttendedCsv.edges);
-      return n.map(data => ({
-        ...data,
-        date: data.date.unix()
-      }));
-    },
-    [rawData]
-  );
+  const data = useMemo(() => {
+    const n = normalizeData(rawData.allAttendedCsv.edges);
+    return n.map((data) => ({
+      ...data,
+      date: data.date.unix(),
+    }));
+  }, [rawData]);
   const [filtered, setFilter] = useState(data);
 
   const columns = useMemo(
     () => [
       {
         Header: "Artist",
-        accessor: "artist"
+        accessor: "artist",
       },
       {
         Header: "Venue",
-        accessor: "venue"
+        accessor: "venue",
       },
       {
         Header: "Date",
         accessor: "date",
-        Cell: ({ row: { original } }) => {
-          return moment.unix(original.date).format("MM/DD/YYYY");
-        }
+        Cell: ({ row: { original } }) =>
+          moment.unix(original.date).format("MM/DD/YYYY"),
       },
       {
         Header: "City",
-        accessor: "city"
+        accessor: "city",
       },
       {
         Header: "State",
         accessor: "state",
-        className: "w-24"
-      }
+        className: "w-24",
+      },
     ],
     []
   );
@@ -152,14 +148,14 @@ const ArchivePage = ({ data: rawData }) => {
   // Debounce callback
   const [debouncedCallback] = useDebouncedCallback(
     // function
-    value => {
+    (value) => {
       if (!value || value === "") {
         setFilter(data);
         return;
       }
       setFilter(
         data.filter(
-          d =>
+          (d) =>
             d.venue.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
             d.artist.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
             d.city.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
@@ -198,7 +194,7 @@ const ArchivePage = ({ data: rawData }) => {
               name="mwdSearch"
               type="text"
               placeholder="Search"
-              onChange={e => debouncedCallback(e.target.value)}
+              onChange={(e) => debouncedCallback(e.target.value)}
             />
           </label>
           <div
