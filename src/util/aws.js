@@ -1,8 +1,6 @@
 const API = "https://gosdw0hrpa.execute-api.us-east-1.amazonaws.com";
 const S3_PUBLIC = "https://music-with-you.s3.amazonaws.com";
 
-export const getSignedUrls = async (name) => {};
-
 export const getSignedUploadUrl = async (name) => {
   try {
     const url = new URL(`${API}/url`);

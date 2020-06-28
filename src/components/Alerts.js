@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
+import { isServer } from "../util/server";
 
-window.customAlert = undefined;
-window.setAlert = (alert) => {
-  window.customAlert = alert;
+if(!isServer) {
+	window.customAlert = undefined;
+	window.setAlert = (alert) => {
+		window.customAlert = alert;
 
-  setTimeout(
-    () => {
-      window.dispatchEvent(new Event("updateAlerts"));
-    },
-    window.customAlertReady ? 0 : 500
-  );
-};
+		setTimeout(
+			() => {
+				window.dispatchEvent(new Event("updateAlerts"));
+			},
+			window.customAlertReady ? 0 : 500
+		);
+	};
+}
 
 const statusClassNames = {
   error: "bg-red-300 border-red-900 text-red-900",
@@ -22,7 +25,9 @@ export const Alerts = () => {
   const [customAlert, setAlert] = useState();
 
   const updateAlerts = () => {
-    setAlert(window.customAlert);
+    if(!isServer) {
+			setAlert(window.customAlert);
+		}
 
     setTimeout(() => {
       setAlert(undefined);
@@ -30,11 +35,13 @@ export const Alerts = () => {
   };
 
   useEffect(() => {
-    window.customAlertReady = true;
-    window.addEventListener("updateAlerts", updateAlerts);
+		if(!isServer) {
+			window.customAlertReady = true;
+			window.addEventListener("updateAlerts", updateAlerts);
+		}
 
     return () => {
-      window.removeEventListener("updateAlerts", updateAlerts);
+			isServer || window.removeEventListener("updateAlerts", updateAlerts);
     };
   }, []);
 

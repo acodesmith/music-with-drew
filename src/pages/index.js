@@ -15,6 +15,7 @@ import { Layout } from "../components/Layout";
 import { Share } from "../components/Share";
 import { theme } from "../util/theme";
 import { getList } from "../util/aws";
+import { isServer } from "../util/server";
 import "./index.css";
 
 const groupData = (data) => {
@@ -89,7 +90,7 @@ const IndexPage = ({ data: rawData }) => {
   const [local, setLocal] = useState(false);
 
   useEffect(() => {
-    const search = new URLSearchParams(window.location.search);
+    const search = new URLSearchParams(isServer || window.location.search);
     if (search.has("list")) {
       const id = search.get("list");
 

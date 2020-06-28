@@ -12,6 +12,7 @@ import {
 } from "../util/data";
 import { downloadFile } from "../util/download";
 import { getSignedUploadUrl, uploadCsv, uploadDetails } from "../util/aws";
+import { isServer } from "../util/server";
 import "./index.css";
 
 const downloadCsv = () => {
@@ -39,7 +40,7 @@ const Upload = () => {
     (files) => {
       const [cvs] = files;
 
-      if (!cvs) {
+      if (!isServer && !cvs) {
         window.setAlert({
           status: "error",
           message: "Error uploading your csv! Try again please.",
@@ -47,7 +48,7 @@ const Upload = () => {
         return;
       }
 
-      if (cvs.name.split(".").pop() !== "csv") {
+      if (cvs.name.split(".").pop() !== "csv" && !isServer) {
         window.setAlert({
           status: "error",
           message:
@@ -73,11 +74,13 @@ const Upload = () => {
           });
         })
         .catch(() => {
-          window.setAlert({
-            status: "error",
-            message:
-              "Something went wrong. Not sure dude. Refresh the page and try again.",
-          });
+          if(!isServer) {
+						window.setAlert({
+							status: "error",
+							message:
+								"Something went wrong. Not sure dude. Refresh the page and try again.",
+						});
+          }
           setProcessing(false);
         });
     },
@@ -87,10 +90,12 @@ const Upload = () => {
   const onClearData = useCallback(() => {
     clearLocalData().then(() => {
       setLocal(false);
-      window.setAlert({
-        status: "info",
-        message: "Data cleared! Original list now active.",
-      });
+      if(!isServer) {
+				window.setAlert({
+					status: "info",
+					message: "Data cleared! Original list now active.",
+				});
+      }
     });
   }, []);
 
@@ -112,7 +117,7 @@ const Upload = () => {
                 e.preventDefault();
                 const form = new FormData(e.target);
                 const name = form.get("name");
-                if (!name || name === "") {
+                if (!name || name === "" && !isServer) {
                   window.setAlert({
                     status: "error",
                     message: "Name required!",

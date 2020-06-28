@@ -13,9 +13,10 @@ import {
   WhatsappShareButton,
   WhatsappIcon,
 } from "react-share";
+import { isServer } from "../util/server";
 
 export const Share = () => {
-  const url = window.location.toString();
+  const url = isServer || window.location.toString();
   const quote = "My Music List - Music With You";
   const size = 30;
 
