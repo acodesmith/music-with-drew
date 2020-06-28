@@ -25,6 +25,7 @@
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.0.1",
     "react-helmet": "^5.2.0",
+    "react-share": "^4.2.0",
     "react-table": "^7.1.0",
     "tailwindcss": "^1.4.6",
     "use-debounce": "^3.4.2"

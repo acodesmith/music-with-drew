@@ -12,6 +12,12 @@ window.setAlert = (alert) => {
   );
 };
 
+const statusClassNames = {
+  error: "bg-red-300 border-red-900 text-red-900",
+  info: "bg-blue-300 border-blue-900 text-blue-900",
+  success: "bg-green-300 border-green-900 text-green-900",
+};
+
 export const Alerts = () => {
   const [customAlert, setAlert] = useState();
 
@@ -33,14 +39,14 @@ export const Alerts = () => {
   }, []);
 
   return (
-    <div className={"absolute"} style={{ right: "1rem", top: "1rem" }}>
+    <div className={"fixed"} style={{ right: "1rem", top: "1rem" }}>
       {customAlert && (
         <div
-          className={
-            "bg-red-300 border-red-900 rounded border-3 border-solid text-red-900 p-2 shadow-lg text-sm"
-          }
+          className={`rounded border-3 border-solid p-2 shadow-lg text-sm ${
+            statusClassNames[customAlert.status]
+          }`}
         >
-          {customAlert}
+          {customAlert.message}
         </div>
       )}
     </div>
