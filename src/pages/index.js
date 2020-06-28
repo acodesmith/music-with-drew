@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { normalizeData, getLocalData, processCsvFromAws } from "../util/data";
 import { Layout } from "../components/Layout";
+import { Share } from "../components/Share";
 import { theme } from "../util/theme";
 import { getList } from "../util/aws";
 import "./index.css";
@@ -84,6 +85,7 @@ const initLocal = ({ setData, setLocal, rawData }) => {
 
 const IndexPage = ({ data: rawData }) => {
   const [data, setData] = useState([]);
+  const [name, setName] = useState("You");
   const [local, setLocal] = useState(false);
 
   useEffect(() => {
@@ -95,17 +97,21 @@ const IndexPage = ({ data: rawData }) => {
 
       // Load the list from aws
       getList(id)
-        .then((data) => {
+        .then(({ csv, info }) => {
           window.localStorage.setItem("list", id);
-
-          processCsvFromAws(data).then((shows) => {
+          processCsvFromAws(csv).then((shows) => {
             setData(normalizeData(shows));
+            console.log("info", info);
+            setName(info.name);
             setLocal(true);
           });
         })
         .catch((e) => {
           console.error(e);
-          window.setAlert("We couldn't load shared list. Sorry bro!");
+          window.setAlert({
+            status: "error",
+            message: "We couldn't load shared list. Sorry dude!",
+          });
           window.localStorage.clear("list");
           initLocal({ setLocal, setData, rawData });
         });
@@ -119,8 +125,11 @@ const IndexPage = ({ data: rawData }) => {
     return (
       <Layout>
         <div className={`${theme("bg-gray-100", "bg-gray-800")} min-h-screen`}>
-          <div className={'flex justify-center items-center'} style={{ height: '100%', width: '100%' }}>
-            <span className={'p-3 bg-white text-blue-900'}>Loading...</span>
+          <div
+            className={"flex justify-center items-center"}
+            style={{ height: "100%", width: "100%" }}
+          >
+            <span className={"p-3 bg-white text-blue-900"}>Loading...</span>
           </div>
         </div>
       </Layout>
@@ -140,7 +149,7 @@ const IndexPage = ({ data: rawData }) => {
               "text-blue-100"
             )} text-5xl pt-6 ml-2`}
           >
-            {local ? "You love music" : "Drew love️s music"}.
+            {local ? `${name} love music` : "Drew love️s music"}.
           </h2>
           <h2
             className={`${theme(
@@ -150,7 +159,7 @@ const IndexPage = ({ data: rawData }) => {
           >
             {local && (
               <>
-                I mean you <em>really</em> love music.
+                I mean {name} <em>really</em> love music.
               </>
             )}
             {!local && (
@@ -315,6 +324,7 @@ const IndexPage = ({ data: rawData }) => {
               </div>
             </div>
           </div>
+          <Share />
         </div>
       </div>
     </Layout>

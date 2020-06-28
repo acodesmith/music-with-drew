@@ -40,25 +40,33 @@ export const uploadDetails = async (presignedUrl, details) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: details,
+      body: JSON.stringify(details),
     });
   } catch (e) {
     console.error(e);
   }
 };
 
-export const getFilePath = (id) => `${S3_PUBLIC}/${id}`;
+export const getFilePath = (id, ext) => `${S3_PUBLIC}/${id}.${ext}`;
 
 export const getList = async (id) => {
-  const csv = await fetch(getFilePath(id), {
+  const csvData = await fetch(getFilePath(id, "csv"), {
+    headers: {
+      "Content-Type": "text/csv",
+    },
+  });
+  const infoData = await fetch(getFilePath(id, "json"), {
     headers: {
       "Content-Type": "text/csv",
     },
   });
 
-  if (csv.status !== 200) {
+  if (csvData.status !== 200 || infoData.status !== 200) {
     throw new Error("List not found.");
   }
 
-  return csv.text();
+  const csv = await csvData.text();
+  const info = await infoData.json();
+
+  return { csv, info };
 };

@@ -35,46 +35,62 @@ const Upload = () => {
     });
   }, []);
 
-  const onDropCallback = useCallback((files) => {
-    const [cvs] = files;
+  const onDropCallback = useCallback(
+    (files) => {
+      const [cvs] = files;
 
-    if (!cvs) {
-      alert("Error uploading your csv! Try again please.");
-      return;
-    }
-
-    if (cvs.name.split(".").pop() !== "csv") {
-      alert("Only .csv files accepted! Please upload the correct format.");
-      return;
-    }
-
-    setProcessing(true);
-
-    processCsvFromUpload(cvs)
-      .then((shows) => {
-        console.log("shows added to local storage: ", shows);
-        const name = makeFileName();
-        getSignedUploadUrl(name).then(async (urls) => {
-          if (urls) {
-            await uploadCsv(urls.csvUrl, files.shift());
-            await uploadDetails(urls.fileUrl, JSON.stringify({ name }));
-            navigate(`/?list=${name}`);
-          } else {
-            navigate("/");
-          }
+      if (!cvs) {
+        window.setAlert({
+          status: "error",
+          message: "Error uploading your csv! Try again please.",
         });
-      })
-      .catch(() => {
-        window.setAlert(
-          "Something went wrong. Not sure dude. Refresh the page and try again."
-        );
-        setProcessing(false);
-      });
-  }, []);
+        return;
+      }
+
+      if (cvs.name.split(".").pop() !== "csv") {
+        window.setAlert({
+          status: "error",
+          message:
+            "Only .csv files accepted! Please upload the correct format.",
+        });
+        return;
+      }
+
+      setProcessing(true);
+
+      processCsvFromUpload(cvs)
+        .then((shows) => {
+          console.log("shows added to local storage: ", shows);
+          const fileName = makeFileName();
+          getSignedUploadUrl(fileName).then(async (urls) => {
+            if (urls) {
+              await uploadCsv(urls.csvUrl, files.shift());
+              await uploadDetails(urls.fileUrl, { name });
+              navigate(`/?list=${fileName}`);
+            } else {
+              navigate("/");
+            }
+          });
+        })
+        .catch(() => {
+          window.setAlert({
+            status: "error",
+            message:
+              "Something went wrong. Not sure dude. Refresh the page and try again.",
+          });
+          setProcessing(false);
+        });
+    },
+    [name]
+  );
 
   const onClearData = useCallback(() => {
     clearLocalData().then(() => {
       setLocal(false);
+      window.setAlert({
+        status: "info",
+        message: "Data cleared! Original list now active.",
+      });
     });
   }, []);
 
@@ -91,13 +107,16 @@ const Upload = () => {
               className={`${theme(
                 "bg-white",
                 "bg-blue-900"
-              )} mx-1 my-3 border-solid border-4 border-gray-600 flex-col flex md:flex sm:flex px-3 py-10 rounded-lg shadow-xl cursor-pointer`}
+              )} mx-1 my-3 border-solid border-4 border-gray-600 flex-col flex md:flex sm:flex px-3 py-10 rounded-lg shadow-xl`}
               onSubmit={(e) => {
                 e.preventDefault();
                 const form = new FormData(e.target);
                 const name = form.get("name");
                 if (!name || name === "") {
-                  alert("Enter Name!");
+                  window.setAlert({
+                    status: "error",
+                    message: "Name required!",
+                  });
                 } else {
                   setName(name);
                 }
