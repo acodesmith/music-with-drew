@@ -1,6 +1,6 @@
 {
-  "name": "gatsby-starter-default",
-  "description": "Music With Drew!",
+  "name": "music-with-me",
+  "description": "Music With Me!",
   "version": "1.0.0",
   "author": "Adam Smith <adam@acodesmith.com>",
   "dependencies": {
